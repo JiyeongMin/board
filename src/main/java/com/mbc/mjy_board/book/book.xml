@@ -1,0 +1,49 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mbc.mjy_board.book.BookService">
+<insert id="inserta">
+	insert into book0910(booknumber,bookname,bookwriter,bookcompany,bookprice,bookdate,bookcontent,bookimage,groups) values(booknumber_seq.nextval,#{param1},#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},booknumber_seq.currval)     
+</insert>
+<select id="outa" resultType="com.mbc.mjy_board.book.BookDTO">
+	select booknumber,bookname,bookwriter,bookcompany,bookprice,to_char(bookdate,'yyyy-MM-dd')bookdate,bookcontent,bookimage,bookreadcnt,groups,step,indent from book0910 order by groups desc, step asc
+</select>
+<select id="bookdetail" resultType="com.mbc.mjy_board.book.BookDTO">
+	select booknumber,bookname,bookwriter,bookcompany,bookprice,to_char(bookdate,'yyyy-MM-dd')bookdate,bookcontent,bookimage,bookreadcnt,groups,step,indent from book0910 where booknumber=#{param1}
+</select>     
+<update id="readcnt">
+	update book0910 set bookreadcnt = bookreadcnt+1 where booknumber=#{param1}
+</update>
+<select id="bookreply" resultType="com.mbc.mjy_board.book.BookDTO">
+	select booknumber,bookname,bookwriter,bookcontent,bookimage,bookreadcnt,groups,step,indent from book0910 where booknumber=#{param1}
+</select>
+<update id="stepup">
+	update book0910 set step = step+1 where groups=#{param1} and step > #{param2}
+</update>
+<insert id="bookreplysave">
+	insert into book0910(booknumber,bookname,bookwriter,bookcontent,bookimage,groups,step,indent) values(booknumber_seq.nextval,#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8})
+</insert>
+<select id="bookdelete" resultType="com.mbc.mjy_board.book.BookDTO">
+	select booknumber,bookname,bookwriter,bookcompany,bookprice,to_char(bookdate,'yyyy-MM-dd')bookdate,bookcontent,bookimage,bookreadcnt from book0910 where booknumber=#{param1}
+</select>
+<delete id="bookdelete2">
+	delete from book0910 where booknumber=#{param1}
+</delete>
+<!--  -->
+<!--  33333 -->
+<!-- 페이징처리에서 전첼레코드수 구하기 -->
+<select id="total" resultType="int">
+   select count(*)from BOOK0910
+</select>
+
+<select id="page" resultType="com.mbc.mjy_board.book.BookDTO">
+   select * from (
+   select rownum rn,A.* from(  
+   select booknumber,bookname,bookwriter,bookcompany,bookprice,to_char(bookdate,'yyyy-MM-dd')bookdate,bookcontent,bookimage,bookreadcnt,groups,step,indent from BOOK0910 order by groups DESC,step asc)A)
+   where rn between #{start} AND #{end}
+</select>
+
+
+<!--  -->
+</mapper>
